@@ -57,7 +57,7 @@ export function isBetween (num, x, y) {
                   return (
                       <View>
                         <MaterialIcons
-                            name='direction-run'
+                            name='directions-run'
                             color={'black'}
                             size={35}
                         />
