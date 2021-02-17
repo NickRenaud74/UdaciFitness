@@ -4,7 +4,8 @@ import {getMetricMetaInfo, timeToString} from '../utils/helpers'
 import Stepper from './Stepper'
 import UdaciSlider from './UdaciSlider'
 import DateHeader from './DateHeader'
-
+import { Ionicons } from '@expo/vector-icons'
+import TextButton from './TextButton'
 
 function SubmitBtn ({ onPress }) {
     return (
@@ -17,7 +18,7 @@ function SubmitBtn ({ onPress }) {
   }
   
 
-function AddEntry() {
+function AddEntry({alreadyLogged}) {
     const [run, setRun] = useState(0)
     const [bike, setBike] = useState(0)
     const [swim, setSwim] = useState(0)
@@ -50,8 +51,6 @@ function AddEntry() {
                 return setBike(value)
             case('swim'):
                 return setSwim(value)
-            default:
-                return null
         }
     }
 
@@ -98,7 +97,25 @@ function AddEntry() {
 
     }
 
+    function reset() {
+        const key = timeToString()
+
+        //Update Redux
+        //Update DB
+        //Route to home
+    }
+
     const metaInfo = getMetricMetaInfo()
+
+    if (alreadyLogged) {
+        return (
+            <View>
+                <Ionicons name='md-happy' size={100} />
+                <Text>You Already Logged Information Today.</Text>
+                <TextButton onPress={reset} >Reset</TextButton>
+            </View>
+        )
+    }
 
     return (
         <View>
