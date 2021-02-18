@@ -1,30 +1,26 @@
 import React, {useState} from 'react'
-import {View, TouchableOpacity, Text} from 'react-native'
-import {getMetricMetaInfo, timeToString} from '../utils/helpers'
+import {View, Text} from 'react-native'
+import {getMetricMetaInfo, timeToString, getDailyReminderValue} from '../utils/helpers'
+import { submitEntry, removeEntry } from '../utils/api'
 import Stepper from './Stepper'
 import UdaciSlider from './UdaciSlider'
 import DateHeader from './DateHeader'
 import { Ionicons } from '@expo/vector-icons'
 import TextButton from './TextButton'
+import { addEntry } from '../actions'
+import { useDispatch, useSelector } from 'react-redux'
 
-function SubmitBtn ({ onPress }) {
-    return (
-      <TouchableOpacity
-        onPress={onPress}
-        >
-          <Text>SUBMIT</Text>
-      </TouchableOpacity>
-    )
-  }
-  
 
-function AddEntry({alreadyLogged}) {
+function AddEntry() {
     const [run, setRun] = useState(0)
     const [bike, setBike] = useState(0)
     const [swim, setSwim] = useState(0)
     const [sleep, setSleep] = useState(0)
     const [eat, setEat] = useState(0)
+    const dispatch = useDispatch()
+    const entries = useSelector(state => state)
 
+    console.log(entries)
     function mapState(metric) {
         switch(metric) {
             case('run'):
@@ -81,7 +77,9 @@ function AddEntry({alreadyLogged}) {
         const key = timeToString()
         const entry = {run, bike, swim, sleep, eat}
 
-        // Update Redux
+        dispatch(addEntry({
+            [key]: entry
+        }))
 
         setBike(0)
         setRun(0)
@@ -90,8 +88,7 @@ function AddEntry({alreadyLogged}) {
         setEat(0)
 
         // Navigate to home
-
-        // Save to "DB"
+        submitEntry(key, entry)
 
         // Clear local notification
 
@@ -100,12 +97,17 @@ function AddEntry({alreadyLogged}) {
     function reset() {
         const key = timeToString()
 
-        //Update Redux
-        //Update DB
+        dispatch(addEntry({
+            [key]: getDailyReminderValue()
+        }))
+
+        removeEntry(key)
         //Route to home
     }
 
     const metaInfo = getMetricMetaInfo()
+    const todaysKey = timeToString()
+    const alreadyLogged = entries[todaysKey] && typeof entries[todaysKey].today === 'undefined'
 
     if (alreadyLogged) {
         return (
@@ -123,7 +125,6 @@ function AddEntry({alreadyLogged}) {
             {Object.keys(metaInfo).map(key => {
                 const {getIcon, type, ...rest } = metaInfo[key]
                 value = mapState(key)
-                console.log(key, value)
                 return (
                     <View key={key}> 
                         {getIcon()}
@@ -144,7 +145,7 @@ function AddEntry({alreadyLogged}) {
                     </View>
                 )
             })}
-            <SubmitBtn onPress={submit} />
+            <TextButton onPress={submit}>SUBMIT</TextButton>
         </View>
     )
 }
