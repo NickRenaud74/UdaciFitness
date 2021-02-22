@@ -1,9 +1,9 @@
 // utils/_calendar.js
 
-import { AsyncStorage } from 'react-native'
+import AsyncStorage from '@react-native-community/async-storage'
 import { getMetricMetaInfo, timeToString } from './helpers'
 
-export const CALENDAR_STORAGE_KEY = 'UdaciFitness:calendar'
+export const CALENDAR_STORAGE_KEY = 'UdaciFitness: calendar'
 
 function getRandomNumber (max) {
   return Math.floor(Math.random() * max) + 0
@@ -19,14 +19,14 @@ function setDummyData () {
     const time = timestamp + i * 24 * 60 * 60 * 1000
     const strTime = timeToString(time)
     dummyData[strTime] = getRandomNumber(3) % 2 === 0
-      ? {
+      ? [{
           run: getRandomNumber(run.max),
           bike: getRandomNumber(bike.max),
           swim: getRandomNumber(swim.max),
           sleep: getRandomNumber(sleep.max),
           eat: getRandomNumber(eat.max),
-        }
-      : null
+        }]
+      : new Array()
   }
 
   AsyncStorage.setItem(CALENDAR_STORAGE_KEY, JSON.stringify(dummyData))
@@ -43,7 +43,7 @@ function setMissingDates (dates) {
     const strTime = timeToString(time)
 
     if (typeof dates[strTime] === 'undefined') {
-      dates[strTime] = null
+      dates[strTime] = new Array()
     }
   }
 
