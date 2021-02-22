@@ -1,13 +1,16 @@
-import React, { useEffect } from 'react'
+import React, { useEffect, useState } from 'react'
 import { View, Text, StyleSheet, Platform, TouchableOpacity } from 'react-native'
 import { useDispatch, useSelector } from 'react-redux'
 import { receiveEntries, addEntry } from '../actions'
 import { timeToString, getDailyReminderValue } from '../utils/helpers'
 import { fetchCalendarResults } from '../utils/api'
 import { white } from '../utils/colors'
-import { Calendar, Agenda } from 'react-native-calendars'
+import { Agenda } from 'react-native-calendars'
+import MetricCard from './MetricCard'
+import { AppLoading } from 'expo-app-loading'
 
 function History() {
+    const [ready, setReady ] = useState(false)
     const entries = useSelector(state => state)
     const dispatch = useDispatch()
 
@@ -19,11 +22,12 @@ function History() {
                 [timeToString()]: getDailyReminderValue()
             }))
         }
+        setReady(true)
     }
 
     useEffect(() => { fetchData() }, [])
 
-    function renderItem({ today, ...metrics }, formattedDate, key) {
+    function renderItem({ today, ...metrics }, key) {
         return (
             <View style={styles.item}> 
                 { today
@@ -32,14 +36,14 @@ function History() {
                     </View>
 
                     : <TouchableOpacity onPress={() => console.log('pressed')} >
-                        <Text>{JSON.stringify(metrics)}</Text>
+                        <MetricCard metrics={metrics}/>
                     </TouchableOpacity>
                     }
             </View>
         )
     }
 
-    function renderEmptyDate(formattedDate) {
+    function renderEmptyDate() {
         return (
             <View style={styles.item}>
                 <Text style={styles.noDataText}>You didn't log any data on this day</Text>
@@ -47,7 +51,9 @@ function History() {
         )
     }
 
-    console.log(entries)
+    if(ready === false) {
+       return <AppLoading />
+    }
 
     return (
         <Agenda
