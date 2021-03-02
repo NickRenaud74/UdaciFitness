@@ -24,7 +24,6 @@ export default function MetricCard({ metrics }) {
                 )
             })}
         </View>
-
     )
 }
 

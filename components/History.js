@@ -7,12 +7,15 @@ import { fetchCalendarResults } from '../utils/api'
 import { white } from '../utils/colors'
 import { Agenda } from 'react-native-calendars'
 import MetricCard from './MetricCard'
-import { AppLoading } from 'expo-app-loading'
+import AppLoading from 'expo-app-loading'
 
-function History() {
+function History({navigation}) {
     const [ready, setReady ] = useState(false)
+    const [selectedDate, setSelectedDate] = useState(new Date().toISOString().slice(0,10))
     const entries = useSelector(state => state)
     const dispatch = useDispatch()
+
+    console.log(entries)
 
     async function fetchData() {
         const getEntries = await fetchCalendarResults()
@@ -27,7 +30,7 @@ function History() {
 
     useEffect(() => { fetchData() }, [])
 
-    function renderItem({ today, ...metrics }, key) {
+    function renderItem(dateKey, {today, ...metrics}, firstItemInDay) {
         return (
             <View style={styles.item}> 
                 { today
@@ -35,7 +38,11 @@ function History() {
                         <Text style={styles.noDataText}>{today}</Text>
                     </View>
 
-                    : <TouchableOpacity onPress={() => console.log('pressed')} >
+                    : <TouchableOpacity 
+                        onPress={() => navigation.navigate(
+                            'Entry Detail', {entryId: dateKey}
+                        )}
+                    >
                         <MetricCard metrics={metrics}/>
                     </TouchableOpacity>
                     }
@@ -51,6 +58,10 @@ function History() {
         )
     }
 
+    function onDayPress(day) {
+        setSelectedDate(day.dateString)
+    }
+
     if(ready === false) {
        return <AppLoading />
     }
@@ -58,7 +69,8 @@ function History() {
     return (
         <Agenda
             items={entries}
-            renderItem={renderItem}
+            onDayPress={onDayPress}
+            renderItem={(item, firstItemInDay) => renderItem(selectedDate, item, firstItemInDay)}
             renderEmptyDate={renderEmptyDate}
         />
     )
