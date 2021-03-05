@@ -15,8 +15,6 @@ function History({navigation}) {
     const entries = useSelector(state => state)
     const dispatch = useDispatch()
 
-    console.log(entries)
-
     async function fetchData() {
         const getEntries = await fetchCalendarResults()
         await dispatch(receiveEntries(getEntries))

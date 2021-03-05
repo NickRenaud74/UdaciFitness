@@ -23,7 +23,7 @@ function SubmitBtn({ onPress }) {
     )
 }
 
-function AddEntry() {
+function AddEntry({navigation}) {
     const [run, setRun] = useState(0)
     const [bike, setBike] = useState(0)
     const [swim, setSwim] = useState(0)
@@ -98,8 +98,8 @@ function AddEntry() {
         setSleep(0)
         setEat(0)
 
-        // Navigate to home
         submitEntry(key, entry)
+        navigation.goBack()
         // Clear local notification
     }
 
@@ -109,12 +109,12 @@ function AddEntry() {
             [key]: getDailyReminderValue()
         }))
         removeEntry(key)
-        //Route to home
+        navigation.goBack()
     }
 
     const metaInfo = getMetricMetaInfo()
     const todaysKey = timeToString()
-    const alreadyLogged = entries[todaysKey] && typeof entries[todaysKey].today === 'undefined'
+    const alreadyLogged = entries[todaysKey][0] && typeof entries[todaysKey][0].today === 'undefined'
 
     if (alreadyLogged) {
         return (

@@ -18,7 +18,7 @@ function UdaciStatusBar({ backgroundColor, ...props }) {
 }
 
 export default function App() {
-    AsyncStorage.clear()
+    //AsyncStorage.clear()
     return (
         <Provider store={createStore(reducer)}>
             <View style={{ flex: 1 }}>

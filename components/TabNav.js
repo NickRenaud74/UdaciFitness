@@ -1,10 +1,10 @@
 import React from 'react'
-
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs'
 import AddEntry from './AddEntry'
 import History from './History'
 import { FontAwesome, Ionicons } from '@expo/vector-icons'
 import { purple, white } from '../utils/colors'
+import Live from './Live'
 
 const Tab = createBottomTabNavigator()
 
@@ -21,6 +21,10 @@ function Nav() {
                     } else if (route.name === 'History') {
                         icon = (
                             <Ionicons name="ios-bookmarks" size={size} color={color} />
+                        )
+                    } else if (route.name === 'Live') {
+                        icon = (
+                            <Ionicons name='ios-speedometer' size={size} color={color} />
                         )
                     }
                     return icon
@@ -39,6 +43,7 @@ function Nav() {
         >
             <Tab.Screen name='History' component={History} />
             <Tab.Screen name='Add Entry' component={AddEntry} />
+            <Tab.Screen name='Live' component={Live} />
         </Tab.Navigator>
     )
 }
